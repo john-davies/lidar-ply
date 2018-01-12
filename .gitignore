@@ -1,0 +1,12 @@
+# Gitignore fie for lidar-ply
+
+# Object files
+source/*.o
+
+#Executables ( easier to list these manually )
+source/lidar2ply
+source/plymenu
+
+# Doxygen documentation directory
+html/
+
