@@ -40,14 +40,21 @@ This is a menu driven command line program that allows the user to read in and p
 * Simple edits, e.g. rescale the model, change all vertex colours, change PLY file type
 * Simple hole filling algorthim mainly for use with 3D models created by photgrammetry and their preparation for 3D printing.
 
+V1.1 - new commands to:
+* Rescale the model in the Z direction only
+* Allow the base to be an absolute size when filling holes
+
 ### lidar2ply
 
 This is a command line program to convert the raw LiDAR data files to PLY files. There are options to add an image overlay and to create mesh from the imported points. Single or multiple files can be processed.
 
 Current missing functionality:
 
-* The "autofill missing data" ( -a ) option has not been implemented.
 * The meshing option ( -m ) will not mesh multiple files correctly.
+
+V1.1:
+* Bug fix to handle case insensitivity in .asc files
+* "autofill missing data" ( -a ) option removed
 
 ## Build instructions
 

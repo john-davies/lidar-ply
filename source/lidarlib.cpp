@@ -23,6 +23,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <cctype>
 
 using namespace std;
 
@@ -54,7 +55,9 @@ struct returnResult lidar::readFromFile( const string fileName )
     {
       getline( inputFile, inputLine );
       vector<string> params = split( inputLine, ' ' );
-      if( params.at(0) == "ncols" )
+      // convert to upper case for case insensitive comparison
+      std::transform(params.at(0).begin(), params.at(0).end(),params.at(0).begin(), ::toupper);
+      if( params.at(0) == "NCOLS" )
       {
         if( ncols_found == true )
         {
@@ -66,7 +69,7 @@ struct returnResult lidar::readFromFile( const string fileName )
           ncols_found = true;
         }
       }
-      else if( params.at(0) == "nrows" )
+      else if( params.at(0) == "NROWS" )
       {
         if( nrows_found == true )
         {
@@ -78,7 +81,7 @@ struct returnResult lidar::readFromFile( const string fileName )
           nrows_found = true;
         }
       }
-      else if( params.at(0) == "xllcorner" )
+      else if( params.at(0) == "XLLCORNER" )
       {
         if( xllcorner_found == true )
         {
@@ -90,7 +93,7 @@ struct returnResult lidar::readFromFile( const string fileName )
           xllcorner_found = true;
         }
       }
-      else if( params.at(0) == "yllcorner" )
+      else if( params.at(0) == "YLLCORNER" )
       {
         if( yllcorner_found == true )
         {
@@ -102,7 +105,7 @@ struct returnResult lidar::readFromFile( const string fileName )
           yllcorner_found = true;
         }
       }
-      else if( params.at(0) == "cellsize" )
+      else if( params.at(0) == "CELLSIZE" )
       {
         if( cellsize_found == true )
         {
@@ -114,7 +117,7 @@ struct returnResult lidar::readFromFile( const string fileName )
           cellsize_found = true;
         }
       }
-      else if( params.at(0) == "NODATA_value" )
+      else if( params.at(0) == "NODATA_VALUE" )
       {
         if( NODATA_value_found == true )
         {

@@ -200,6 +200,37 @@ void changeScale( void )
   }
 }
 
+// ------------------------------------------------------------------------
+
+void changeZScale( void )
+{
+  struct boundingBox box;
+  struct returnResult res = modelFile.getBoundingBox( box );
+  string scaleFactor;
+
+  if( res.result == false )
+  {
+    cout << "Error: " + res.reason << endl;;
+  }
+  else
+  {
+    cout << "Current bounding box:" << endl;
+    cout << "X: min: " << box.minX << " max: " << box.maxX << endl;
+    cout << "Y: min: " << box.minY << " max: " << box.maxY << endl;
+    cout << "Z: min: " << box.minZ << " max: " << box.maxZ << endl;
+    cout << "Enter scale factor ( or blank to quit ): ";
+    getline( cin, scaleFactor );
+    if( scaleFactor != "" )
+    {
+      res = modelFile.scaleModel( "1.0", "1.0", scaleFactor );
+      if( res.result == false )
+      {
+        cout << "Error: " + res.reason << endl;
+      }
+    }
+  }
+}
+
 // Hole Menu functions ====================================================
 
 void clearHoleData( void )
@@ -514,6 +545,7 @@ void fillHolesWithBase( void )
   unsigned int holeNo;
   float height;
   string input;
+  bool absoluteHeight = false;
 
   // Get the hole id
   cout << "Select hole number: ";
@@ -527,48 +559,72 @@ void fillHolesWithBase( void )
   holeNo--;
 
   // Get base height
-  cout << "Enter base height as a %age of overall height: ";
+  cout << "Enter base specification either: " << endl;
+  cout << " (1) as a percentage of overall height, e.g. \'5%\' or" << endl;
+  cout << " (2) as an absolute Z value, e.g. \'26\'" << endl;
+  cout << ">";
   getline( cin, input );
-  height = stof( input );
-  if( height < 0 )
+  // Check if the input contains a '%' character
+  size_t found = input.find( '%' );
+  if( found == string::npos)
   {
-    cout << "Error - base specification" << endl;
-    return;
+    // Absolute value
+    height = stof( input );
+    absoluteHeight = true;
+  }
+  else
+  {
+    // Strip '%' character
+    input.erase( found, 1 );
+    height = stof( input );
+    if( height < 0 )
+    {
+      cout << "Error - base specification" << endl;
+      return;
+    }
   }
 
-  // Calculate the lowest Z value of the hole verticies
+  // Calculate the Z height of the base
   struct vertexCoordinates v;
   double zmin;
-  res = modelFile.getCoordinates(holeList.at(holeNo).front(), v );
-  if( res.result == false )
+  if( absoluteHeight == true )
   {
-    cout << res.reason << endl;
-    return;
+    zmin = height;
   }
-  zmin = v.z;
-  for( unsigned int i=1; i<holeList.at(holeNo).size(); i++ )
+  else
   {
-    res = modelFile.getCoordinates(holeList.at(holeNo).at(i), v );
+    // Calculate the lowest Z value of the hole verticies
+    res = modelFile.getCoordinates(holeList.at(holeNo).front(), v );
     if( res.result == false )
     {
       cout << res.reason << endl;
       return;
     }
-    if( v.z < zmin )
+    zmin = v.z;
+    for( unsigned int i=1; i<holeList.at(holeNo).size(); i++ )
     {
-      zmin = v.z;
+      res = modelFile.getCoordinates(holeList.at(holeNo).at(i), v );
+      if( res.result == false )
+      {
+        cout << res.reason << endl;
+        return;
+      }
+      if( v.z < zmin )
+      {
+        zmin = v.z;
+      }
     }
-  }
 
-  // Calculate the z displacement for base
-  struct boundingBox bBox;
-  res = modelFile.getBoundingBox( bBox );
-  if( res.result == false )
-  {
-    cout << res.reason << endl;
-    return;
+    // Calculate the z displacement for base
+    struct boundingBox bBox;
+    res = modelFile.getBoundingBox( bBox );
+    if( res.result == false )
+    {
+      cout << res.reason << endl;
+      return;
+    }
+    zmin = zmin - ( ( bBox.maxZ - bBox.minZ ) * ( height / 100 ) );
   }
-  zmin = zmin - ( ( bBox.maxZ - bBox.minZ ) * ( height / 100 ) );
 
   // Make a copy of the hole verticies for the base
   vector<unsigned int> base;
@@ -669,7 +725,8 @@ void edit( void )
  vector<menuItem> editMenu = {
    { &changeFormat, "Change format type" },
    { &changeAllVertexColours, "Change all vertex colours"},
-   { &changeScale, "Change model scale" }
+   { &changeScale, "Change model scale" },
+   { &changeZScale, "Change model scale Z axis only" }
  };
 
  domenu( editMenu, true, "-----\nEdit functions" );
@@ -695,8 +752,8 @@ void holes( void )
 
 int main( int argc, char *argv[] )
 {
-  cout << "PLY file editor" << endl;
-  cout << "===============" << endl;
+  cout << "PLY file editor v1.1" << endl;
+  cout << "====================" << endl;
 
   if( argc == 2 )
   {

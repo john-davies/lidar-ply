@@ -77,8 +77,7 @@ void printHelp( void )
   cout << "lidar2ply -l <list file>" << endl;
   cout << "             <list file> : text file containing a list of LiDAR/image files" << endl;
   cout << endl;
-  cout << "General options: -a : auto fill NODATA values" << endl;
-  cout << "                 -m : create an output mesh" << endl;
+  cout << "General options: -m : create an output mesh" << endl;
 }
 
 // ------------------------------------------------------------------------
@@ -399,7 +398,7 @@ void singleFile( void )
 
 int main( int argc, char *argv[] )
 {
-  cout << "LiDAR to PLY converter, V1.0" << endl;
+  cout << "LiDAR to PLY converter, V1.1" << endl;
 
   int c;
   opterr = 0;
