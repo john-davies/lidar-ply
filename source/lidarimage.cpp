@@ -36,14 +36,14 @@ lidarImage::lidarImage( unsigned int x, unsigned int y, unsigned int colourDepth
   maxColourDepth = colourDepth;
 
   // Create the array to store the data
-  values = new struct rgb*[ ySize ];
+  values = new struct rgb*[ xSize ];
   if( values == NULL )
   {
     throw logic_error( "Failed to create \"values\" array" );
   }
-  for( unsigned int i=0; i<ySize; i++ )
+  for( unsigned int i=0; i<xSize; i++ )
   {
-    values[i] = new struct rgb[ xSize ];
+    values[i] = new struct rgb[ ySize ];
     if( values[i] == NULL )
     {
       throw logic_error( "Failed to create row array: " + i );
@@ -88,38 +88,39 @@ struct returnResult lidarImage::readFromFile( string fileName )
         res.result = false;
         res.reason = "File size mismatch";
       }
-
+      else
+      {
       // Read the data, line at a time
       // Should be something like:
       // 0,0: (32,31,225)  #201FE1  srgb(32,31,225)
-      while( getline ( inputFile, inputLine ) )
-      {
-        // Ignore blank lines
-        if( inputLine.empty() )
+        while( getline ( inputFile, inputLine ) )
         {
-          continue;
+          // Ignore blank lines
+          if( inputLine.empty() )
+          {
+            continue;
+          }
+          p1 = split( inputLine, ':' );
+          // Row & column
+          p2 = split( p1.at(0), ',' );
+          unsigned int x = stoi( p2.at(0) );
+          unsigned int y = stoi( p2.at(1) );
+          // Colours
+          p1 = split( inputLine, ' ' );
+          // Get rid of the brackets
+          p1.at(1).erase( p1.at(1).begin() );
+          p1.at(1).erase( p1.at(1).end()-1 );
+          p2 = split( p1.at(1), ',' );
+          unsigned int red = stoi( p2.at(0) );
+          unsigned int green = stoi( p2.at(1) );
+          unsigned int blue = stoi( p2.at(2) );
+          // And write to array, north = up
+          values[x][ySize-1-y].red = red;
+          values[x][ySize-1-y].green = green;
+          values[x][ySize-1-y].blue = blue;
         }
-        p1 = split( inputLine, ':' );
-        // Row & column
-        p2 = split( p1.at(0), ',' );
-        unsigned int x = stoi( p2.at(0) );
-        unsigned int y = stoi( p2.at(1) );
-        // Colours
-        p1 = split( inputLine, ' ' );
-        // Get rid of the brackets
-        p1.at(1).erase( p1.at(1).begin() );
-        p1.at(1).erase( p1.at(1).end()-1 );
-        p2 = split( p1.at(1), ',' );
-        unsigned int red = stoi( p2.at(0) );
-        unsigned int green = stoi( p2.at(1) );
-        unsigned int blue = stoi( p2.at(2) );
-        // And write to array, north = up
-        values[x][ySize-1-y].red = red;
-        values[x][ySize-1-y].green = green;
-        values[x][ySize-1-y].blue = blue;
       }
     }
-
   }
   catch (const ifstream::failure& e)
   {

@@ -159,7 +159,7 @@ void processFiles( vector< vector<string> > files, string modelName )
     if( imageOverlay == true )
     {
       cout << "  Opening image file" << endl;
-      image = new lidarImage( r, c, 255 );
+      image = new lidarImage( c, r, 255 );
       ret = image->readFromFile( f.at(1) );
       if( ret.result == false )
       {
@@ -291,7 +291,7 @@ void singleFile( void )
     if( imageFileOpt == true )
     {
       cout << "Processing image file: " << imageFileName << endl;
-      image = new lidarImage( r, c, 255 );
+      image = new lidarImage( c, r, 255 );
       ret = image->readFromFile( string( imageFileName ) );
       if( ret.result == false )
       {
