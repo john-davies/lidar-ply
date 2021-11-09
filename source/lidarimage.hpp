@@ -23,12 +23,7 @@
 
 using namespace std;
 
-/// Class to read and store Imagemagic ".txt" format images.
-/// File is of the format:
-///   - # ImageMagick pixel enumeration: 20,20,255,srgb
-///   - 0,0: (32,31,225)  #201FE1  srgb(32,31,225)
-///   - ... further lines as necessary
-///
+/// Class to read and store png images.
 
 class lidarImage
 {

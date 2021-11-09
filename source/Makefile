@@ -13,7 +13,7 @@ plymenu.o: plymenu.cpp plylib.o
 	$(CC) $(CFLAGS) -c plymenu.cpp
 
 lidar2ply: lidar2ply.o lidarimage.o
-	$(CC) $(CFLAGS) -o lidar2ply lidar2ply.o lidarlib.o plylib.o ply_element.o ply_element_sep.o ply_element_list.o util.o lidarply.o lidarimage.o
+	$(CC) $(CFLAGS) -o lidar2ply lidar2ply.o lidarlib.o plylib.o ply_element.o ply_element_sep.o ply_element_list.o util.o lidarply.o lidarimage.o lodepng.o
 
 lidar2ply.o: lidar2ply.cpp lidarlib.o plylib.o lidarply.o
 		$(CC) $(CFLAGS) -c lidar2ply.cpp
@@ -52,9 +52,12 @@ lidarply.o: lidarply.cpp lidarply.hpp
 lidarlib.o: lidarlib.cpp lidarlib.hpp plylib.o
 	$(CC) $(CFLAGS) -c lidarlib.cpp
 
-lidarimage.o: lidarimage.cpp lidarimage.hpp util.o
+lidarimage.o: lidarimage.cpp lidarimage.hpp lodepng.o util.o
 	$(CC) $(CFLAGS) -c lidarimage.cpp
 
+# From https://github.com/lvandeve/lodepng
+lodepng.o: lodepng.cpp lodepng.h
+	$(CC) $(CFLAGS) -c lodepng.cpp
 
 # ----------------------------------------------------------------------------
 # Clean up
